@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import express from "express";
 
 const router = express.Router();
@@ -10,17 +10,17 @@ router.get('/:slug', async (req, res) => {
     const data = req.params.slug.toLowerCase().replace(" ", "%20")
     let browser;
     try {
-        const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
-        // const browser = await puppeteer.launch();
-        browser = await puppeteer.launch({
-            executablePath: path_to_exe,
-            defaultViewport: false,
-            headless: false,
-            // args: [
-            //     '--use-fake-ui-for-media-stream',
-            //     '--enable-features=NetworkService,NetworkServiceInProcess'
-            // ]
-        });
+        // const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
+        browser = await puppeteer.launch();
+        // browser = await puppeteer.launch({
+        //     executablePath: path_to_exe,
+        //     defaultViewport: false,
+        //     headless: false,
+        //     args: [
+        //         '--use-fake-ui-for-media-stream',
+        //         '--enable-features=NetworkService,NetworkServiceInProcess'
+        //     ]
+        // });
 
         const page = await browser.newPage();
 
