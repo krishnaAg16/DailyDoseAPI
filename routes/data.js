@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import express from "express";
 
 const router = express.Router();
@@ -10,17 +10,17 @@ router.get('/:slug', async (req, res) => {
     const data = req.params.slug.toLowerCase().replace(" ", "%20")
     let browser;
     try {
-        // const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
-        const browser = await puppeteer.launch();
-        // browser = await puppeteer.launch({
-        //     executablePath: path_to_exe,
-        //     defaultViewport: false,
-        //     headless: false,
-        //     // args: [
-        //     //     '--use-fake-ui-for-media-stream',
-        //     //     '--enable-features=NetworkService,NetworkServiceInProcess'
-        //     // ]
-        // });
+        const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
+        // const browser = await puppeteer.launch();
+        browser = await puppeteer.launch({
+            executablePath: path_to_exe,
+            defaultViewport: false,
+            headless: false,
+            // args: [
+            //     '--use-fake-ui-for-media-stream',
+            //     '--enable-features=NetworkService,NetworkServiceInProcess'
+            // ]
+        });
 
         const page = await browser.newPage();
 
@@ -56,7 +56,7 @@ router.get('/:slug', async (req, res) => {
             return res_data;
         });
 
-        res.json(cardsData);
+        res.status(200).json(cardsData);
 
 
 
@@ -85,18 +85,13 @@ export default router;
 
 
 
+// const context = browser.defaultBrowserContext();
+// await context.overridePermissions("https://www.1mg.com", ['geolocation']);
 
-
-
-
-
- // const context = browser.defaultBrowserContext();
-        // await context.overridePermissions("https://www.1mg.com", ['geolocation']);
-
-        // await page.setGeolocation({ latitude: 27.176670, longitude: 78.008072 });
+// await page.setGeolocation({ latitude: 27.176670, longitude: 78.008072 });
         
-        // await new Promise(resolve => setTimeout(resolve, 5000));
+// await new Promise(resolve => setTimeout(resolve, 5000));
         
-        // page.waitForSelector('#update-city-modal > div')
-        // page.mouse.click('#update-city-modal > div > div.UpdateCityModal__update-confirm___1iV9N > div.UpdateCityModal__update-btn___2qmN1.UpdateCityModal__btn___oMW5n')
+// page.waitForSelector('#update-city-modal > div')
+// page.mouse.click('#update-city-modal > div > div.UpdateCityModal__update-confirm___1iV9N > div.UpdateCityModal__update-btn___2qmN1.UpdateCityModal__btn___oMW5n')
        
