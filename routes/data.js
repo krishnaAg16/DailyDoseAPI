@@ -10,7 +10,7 @@ router.get('/:slug', async (req, res) => {
     const data = req.params.slug.toLowerCase().replace(" ", "%20")
     let browser;
     try {
-        const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
+        // const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
         const browser = await puppeteer.launch();
         // browser = await puppeteer.launch({
         //     executablePath: path_to_exe,
