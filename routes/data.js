@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.get('/:slug', (req, res) => {
     const city_name = req.query.city;
+    const idx = req.query.idx || 0;
     const data = req.params.slug.toLowerCase().replace(" ", "%20");
-    console.log(city_name)
     try {
         axios.get('https://www.1mg.com/search/all?filter=true&name=' + data, {
             headers: {
@@ -25,8 +25,8 @@ router.get('/:slug', (req, res) => {
             var str_new = response.data.slice(response.data.indexOf('window.PRELOADED_STATE') + 26)
             var finale_str = str_new.slice(0, str_new.indexOf('</script>') - 2)
             var a = JSON.parse(JSON.parse(finale_str))
-            var b = a.searchPage.productList[0].data[2]
-            res.status(200).json({ vendor: "1mg", name: b?.name, price: b.discountedPrice, link: `https://www.1mg.com${b.url}` });
+            var b = Array.from(a.searchPage.productList[0].data)[idx]
+            res.status(200).json({ vendor: "1mg", name: b?.name, price: b.discountedPrice || b.price, link: `https://www.1mg.com${b.url}` });
         })
 
     } catch (err) {
