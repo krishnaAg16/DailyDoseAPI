@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import axios from "axios"
 import express from "express";
 
 const router = express.Router();
@@ -6,92 +6,33 @@ const router = express.Router();
 
 
 
-router.get('/:slug', async (req, res) => {
-    const data = req.params.slug.toLowerCase().replace(" ", "%20")
-    let browser;
+router.get('/:slug', (req, res) => {
+    const city_name = req.query.city;
+    const data = req.params.slug.toLowerCase().replace(" ", "%20");
+    console.log(city_name)
     try {
-        // const path_to_exe = "C:/Users/krish/.cache/puppeteer/chrome/win64-128.0.6613.86/chrome-win64/chrome.exe";
-        browser = await puppeteer.launch();
-        // browser = await puppeteer.launch({
-        //     executablePath: path_to_exe,
-        //     defaultViewport: false,
-        //     headless: false,
-        //     args: [
-        //         '--use-fake-ui-for-media-stream',
-        //         '--enable-features=NetworkService,NetworkServiceInProcess'
-        //     ]
-        // });
-
-        const page = await browser.newPage();
-
-
-        const medpage = "https://www.1mg.com/search/all?filter=true&name=" + data;
-
-        await page.goto(medpage);
-
-        await page.waitForSelector('#category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div:nth-child(2) > div > div > div > div.row.style__grid-container___3OfcL')
-
-
-
-// #category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div.style__div-description___1pa6p > span
-// #category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div.style__div-description___1pa6p > span
-
-
-
-
-
-// #category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div:nth-child(2) > div > div > div > div.row.style__grid-container___3OfcL
-// #category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div:nth-child(2) > div.col-md-9 > div > div.product-card-container.style__sku-list-container___jSRzr > div:nth-child(3) > div:nth-child(1)
-// #category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div:nth-child(2) > div.col-md-9 > div > div.product-card-container.style__sku-list-container___jSRzr > div:nth-child(3)
-// #category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div:nth-child(2) > div > div > div > div.row.style__grid-container___3OfcL
-        const cardsData = await page.evaluate(async () => {
-
-            const response = document.querySelector("#category-container > div > div.col-xs-12.col-md-10.col-sm-9 > div:nth-child(2) > div > div > div > div.row.style__grid-container___3OfcL> div > div:nth-child(1)");
-
-            const name = response.querySelector('div > a > div.style__product-description___zY35s > div.style__pro-title___3G3rr').innerText
-            const price = response.querySelector('div > a > div.style__product-pricing___1OxnE > div > div.style__price-tag___KzOkY').innerText
-            const link = response.querySelector('div > a').href
-            res_data = { vendor: "1mg", name, price, link }
-
-            return res_data;
-        });
-
-        res.status(200).json(cardsData);
-
-
-
+        axios.get('https://www.1mg.com/search/all?filter=true&name=' + data, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Referer': 'https://www.1mg.com/',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
+                'cookie': `city=${city_name}`
+            }
+        }).then(response => {
+            var str_new = response.data.slice(response.data.indexOf('window.PRELOADED_STATE') + 26)
+            var finale_str = str_new.slice(0, str_new.indexOf('</script>') - 2)
+            var a = JSON.parse(JSON.parse(finale_str))
+            var b = a.searchPage.productList[0].data[2]
+            res.status(200).json({ vendor: "1mg", name: b?.name, price: b.discountedPrice, link: `https://www.1mg.com${b.url}` });
+        })
 
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "server error" });
     }
-    finally {
-        browser?.close();
-    }
 });
 
 export default router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const context = browser.defaultBrowserContext();
-// await context.overridePermissions("https://www.1mg.com", ['geolocation']);
-
-// await page.setGeolocation({ latitude: 27.176670, longitude: 78.008072 });
-        
-// await new Promise(resolve => setTimeout(resolve, 5000));
-        
-// page.waitForSelector('#update-city-modal > div')
-// page.mouse.click('#update-city-modal > div > div.UpdateCityModal__update-confirm___1iV9N > div.UpdateCityModal__update-btn___2qmN1.UpdateCityModal__btn___oMW5n')
-       
