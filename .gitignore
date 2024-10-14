@@ -2,3 +2,5 @@
 axios_scrape.js
 pharmeasy.html
 scrape.js
+routes/easy.js
+routes/mg.js
