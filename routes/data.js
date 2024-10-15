@@ -53,12 +53,13 @@ const fetchFrom1mg = async (data, pincode) => {
         const parsedData = JSON.parse(JSON.parse(finale_str));
         const products = parsedData?.searchPage?.productList?.[0]?.data || [];
 
-        return products.map(c => ({
+        const results = products.map(c => ({
             vendor: "1mg",
             name: c.name,
             price: c.discountedPrice || c.price,
             link: `https://www.1mg.com${c.url}`
         }));
+        return results.slice(0, 5);
     } catch (error) {
         console.error('Error fetching data from 1mg:', error.message);
         return [];
@@ -121,7 +122,7 @@ const fetchFromPharmeasy = async (data, pincode) => {
                 }
             });
 
-        return results;
+        return results.slice(0, 5);
 
     } catch (error) {
         console.error('Error fetching data from Pharmeasy:', error.message);
@@ -141,6 +142,12 @@ router.get('/:slug', async (req, res) => {
         ]);
 
         const combinedResults = [...oneMgData, ...pharmeasyData];
+
+        combinedResults.sort((a, b) => {
+            const priceA = parseFloat(a.price);
+            const priceB = parseFloat(b.price);
+            return priceA - priceB;
+        });
 
         res.status(200).json(combinedResults);
     } catch (error) {
