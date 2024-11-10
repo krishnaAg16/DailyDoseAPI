@@ -59,7 +59,7 @@ const fetchFrom1mg = async (data, pincode) => {
             price: c.discountedPrice || c.price,
             link: `https://www.1mg.com${c.url}`
         }));
-        return results.slice(0, 5);
+        return results;
     } catch (error) {
         console.error('Error fetching data from 1mg:', error.message);
         return [];
@@ -155,5 +155,20 @@ router.get('/:slug', async (req, res) => {
         res.status(500).json({ error: "server error" });
     }
 });
+
+router.get('/link/:slug', async (req, res) => {
+    const pincode = 282004;
+    const { slug } = req.params;
+    const data = slug.toLowerCase().replace(" ", "%20");
+
+    try {
+        const oneMgData = await fetchFrom1mg(data, pincode)
+
+        res.status(200).json({ link: oneMgData[0].link });
+    } catch (error) {
+        console.error('Error combining data:', error.message);
+        res.status(500).json({ error: "server error" });
+    }
+})
 
 export default router;
