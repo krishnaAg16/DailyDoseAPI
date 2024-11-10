@@ -59,7 +59,7 @@ const fetchFrom1mg = async (data, pincode) => {
             price: c.discountedPrice || c.price,
             link: `https://www.1mg.com${c.url}`
         }));
-        return results;
+        return results.slice(0, 5);
     } catch (error) {
         console.error('Error fetching data from 1mg:', error.message);
         return [];
